@@ -2,106 +2,124 @@
 using System.Collections;
 using RootMotion.Dynamics;
 
-namespace RootMotion.Demos {
-	
-	public class CharacterMeleeDemo : CharacterPuppet {
-		
-		[System.Serializable]
-		public class Action {
+namespace RootMotion.Demos
+{
 
-			[System.Serializable]
-			public class Anim {
-				public string stateName;
-				public int layer;
-				public float transitionDuration;
-				public float fixedTime;
-			}
+    public class CharacterMeleeDemo : CharacterPuppet
+    {
 
-			public string name;
-			//public KeyCode keyCode;
-			public int inputActionIndex = 1;
-			public float duration;
-			public float minFrequency;
-			public Anim anim;
-			public int[] requiredPropTypes;
-			public Booster[] boosters;
-		}
+        [System.Serializable]
+        public class Action
+        {
 
-		[Header("Melee")]
+            [System.Serializable]
+            public class Anim
+            {
+                public string stateName;
+                public int layer;
+                public float transitionDuration;
+                public float fixedTime;
+            }
 
-		public Action[] actions;
-		[HideInInspector] public int currentActionIndex = -1;
-		[HideInInspector] public float lastActionTime;
+            public string name;
+            //public KeyCode keyCode;
+            public int inputActionIndex = 1;
+            public float duration;
+            public float minFrequency;
+            public Anim anim;
+            public int[] requiredPropTypes;
+            public Booster[] boosters;
+        }
 
-		protected override void Start() {
-			currentActionIndex = -1;
-			lastActionTime = 0f;
+        [Header("Melee")]
 
-			base.Start();
-		}
+        public Action[] actions;
+        [HideInInspector] public int currentActionIndex = -1;
+        [HideInInspector] public float lastActionTime;
 
-		public Action currentAction { 
-			get { 
-				if (currentActionIndex < 0) return null;
-				return actions[currentActionIndex]; 
-			}
-		}
+        protected override void Start()
+        {
+            currentActionIndex = -1;
+            lastActionTime = 0f;
 
-		protected override void Update() {
-			// Actions
-			if (puppet.state == BehaviourPuppet.State.Puppet) {
+            base.Start();
+        }
 
-				for (int i = 0; i < actions.Length; i++) {
-					if (StartAction(actions[i])) {
-						currentActionIndex = i;
+        public Action currentAction
+        {
+            get
+            {
+                if (currentActionIndex < 0) return null;
+                return actions[currentActionIndex];
+            }
+        }
 
-						foreach (Booster booster in actions[i].boosters) {
-							booster.Boost(puppet);
-						}
+        protected override void Update()
+        {
+            // Actions
+            if (puppet.state == BehaviourPuppet.State.Puppet)
+            {
 
-						if (propRoot.currentProp is PropMelee) {
-							(propRoot.currentProp as PropMelee).StartAction(actions[i].duration);
-						}
+                for (int i = 0; i < actions.Length; i++)
+                {
+                    if (StartAction(actions[i]))
+                    {
+                        currentActionIndex = i;
 
-						lastActionTime = Time.time;
-						lastActionMoveMag = moveDirection.magnitude;
-					}
-				}
-			}
+                        foreach (Booster booster in actions[i].boosters)
+                        {
+                            booster.Boost(puppet);
+                        }
 
-			if (Time.time < lastActionTime + 0.5f) {
-				moveDirection = moveDirection.normalized * Mathf.Max(moveDirection.magnitude, lastActionMoveMag);
-			}
+                        if (propRoot.currentProp is PropMelee)
+                        {
+                            (propRoot.currentProp as PropMelee).StartAction(actions[i].duration);
+                        }
 
-			base.Update();
-		}
+                        lastActionTime = Time.time;
+                        lastActionMoveMag = moveDirection.magnitude;
+                    }
+                }
+            }
 
-		float lastActionMoveMag;
+            if (Time.time < lastActionTime + 0.5f)
+            {
+                moveDirection = moveDirection.normalized * Mathf.Max(moveDirection.magnitude, lastActionMoveMag);
+            }
 
-		private bool StartAction(Action action) {
-			if (Time.time < lastActionTime + action.minFrequency) return false;
-			if (userControl.state.actionIndex != action.inputActionIndex) return false;
-			//if (!Input.GetKey(action.keyCode)) return false;
+            base.Update();
+        }
 
-			if (action.requiredPropTypes.Length > 0) {
-				if (propRoot.currentProp == null && action.requiredPropTypes[0] == -1) return true;
-				if (propRoot.currentProp == null) return false;
+        float lastActionMoveMag;
 
-				bool incl = false;
+        private bool StartAction(Action action)
+        {
+            if (Time.time < lastActionTime + action.minFrequency) return false;
+            if (userControl.state.actionIndex != action.inputActionIndex) return false;
+            //if (!Input.GetKey(action.keyCode)) return false;
 
-				for (int i = 0; i < action.requiredPropTypes.Length; i++) {
-					if (action.requiredPropTypes[i] == propRoot.currentProp.propType) {
-						incl = true;
-						break;
-					}
-				}
+            if (action.requiredPropTypes.Length > 0)
+            {
+                if (propRoot.currentProp == null && action.requiredPropTypes[0] == -1) return true;
+                if (propRoot.currentProp == null) return false;
 
-				if (!incl) return false;
-			}
+                bool incl = false;
 
-			return true;
-		}
-	}
+                for (int i = 0; i < action.requiredPropTypes.Length; i++)
+                {
+                    if (action.requiredPropTypes[i] == propRoot.currentProp.propType)
+                    {
+                        incl = true;
+                        break;
+                    }
+                }
+
+                if (!incl) return false;
+            }
+
+            return true;
+        }
+    }
 
 
 }
