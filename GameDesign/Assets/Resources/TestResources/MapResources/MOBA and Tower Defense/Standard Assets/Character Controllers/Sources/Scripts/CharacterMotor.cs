@@ -3,7 +3,7 @@ using System.Collections;
 
 
 
-public class MouseLook : MonoBehaviour
+public class CharacterMotor : MonoBehaviour
 {
     // Does this script currently respond to input?
     bool canControl = true;
@@ -11,7 +11,7 @@ public class MouseLook : MonoBehaviour
     bool useFixedUpdate = true;
 
     // The current global direction we want the character to move in.
-    Vector3 inputMoveDirection = Vector3.zero;
+   internal  Vector3 inputMoveDirection = Vector3.zero;
 
     bool boolean = false;
 
@@ -23,8 +23,8 @@ public class MouseLook : MonoBehaviour
         internal float maxBackwardsSpeed = 10.0f;
 
         // Curve for multiplying speed based on slope (negative = downwards)
-        Keyframe[] keyframe = new Keyframe[3] { new Keyframe(-90, 1), new Keyframe(0, 1), new Keyframe(90, 0) };
-        internal AnimationCurve slopeSpeedMultiplier ;
+        internal Keyframe[] keyframe = new Keyframe[3] { new Keyframe(-90, 1), new Keyframe(0, 1), new Keyframe(90, 0) };
+        internal AnimationCurve slopeSpeedMultiplier;
 
         // How fast does the character change speeds?  Higher is faster.
         internal float maxGroundAcceleration = 30.0f;
@@ -159,7 +159,7 @@ public class MouseLook : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         tr = transform;
-        //slopeSpeedMultiplier = new AnimationCurve(keyframe);
+        movement.slopeSpeedMultiplier = new AnimationCurve(movement.keyframe);
     }
 
     private void UpdateFunction()
@@ -394,7 +394,7 @@ public class MouseLook : MonoBehaviour
     }
 
     // mask
-    bool inputJump;
+    internal bool inputJump;
 
     private Vector3 ApplyGravityAndJumping(Vector3 velocity)
     {
@@ -477,7 +477,7 @@ public class MouseLook : MonoBehaviour
         return velocity;
     }
 
-    void OnControllerColliderHit( ControllerColliderHit hit )
+    void OnControllerColliderHit(ControllerColliderHit hit)
     {
         if (hit.normal.y > 0 && hit.normal.y > groundNormal.y && hit.moveDirection.y < 0)
         {
