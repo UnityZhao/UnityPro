@@ -167,10 +167,10 @@ namespace RootMotion.Demos {
 				jumpReleased = false;
 				doubleJumped = false;
 			} else {
-				if (!userControl.state.jump) jumpReleased = true;
+				if (!userControl.state.isJump) jumpReleased = true;
 
 				//r.AddForce(gravity * gravityMultiplier);
-				if (jumpReleased && userControl.state.jump && !doubleJumped && doubleJumpEnabled) {
+				if (jumpReleased && userControl.state.isJump && !doubleJumped && doubleJumpEnabled) {
 					jumpEndTime = Time.time + 0.1f;
 					animState.doubleJump = true;
 
@@ -182,7 +182,7 @@ namespace RootMotion.Demos {
 			}
 
 			// Scale the capsule colllider while crouching
-			ScaleCapsule(userControl.state.crouch? crouchCapsuleScaleMlp: 1f);
+			ScaleCapsule(userControl.state.isCrouch? crouchCapsuleScaleMlp: 1f);
 
 			fixedFrame = true;
         }
@@ -192,7 +192,7 @@ namespace RootMotion.Demos {
 			animState.onGround = onGround;
 			animState.moveDirection = GetMoveDirection();
 			animState.yVelocity = Mathf.Lerp(animState.yVelocity, velocityY, Time.deltaTime * 10f);
-			animState.crouch = userControl.state.crouch;
+			animState.crouch = userControl.state.isCrouch;
 			animState.isStrafing = moveMode == MoveMode.Strafe;
 		}
 
@@ -359,8 +359,8 @@ namespace RootMotion.Demos {
 
 		protected virtual bool Jump() {
 			// check whether conditions are right to allow a jump:
-			if (!userControl.state.jump) return false;
-			if (userControl.state.crouch) return false;
+			if (!userControl.state.isJump) return false;
+			if (userControl.state.isCrouch) return false;
 			if (!characterAnimation.animationGrounded) return false;
 			if (Time.time < lastAirTime + jumpRepeatDelayTime) return false;
 
