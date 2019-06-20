@@ -244,7 +244,7 @@ public class ETCInput : MonoBehaviour{
 	
 	public static ETCButton GetControlButton(string ctrlName){
 		if (ETCInput.instance.controls.TryGetValue( ctrlName, out control)){
-			if (control.GetType() == typeof(ETCJoystick)){
+			if (control.GetType() == typeof(ETCButton)){
 				ETCButton tmpctrl = (ETCButton)control;
 				return tmpctrl;
 			}
